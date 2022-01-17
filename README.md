@@ -1,10 +1,29 @@
 
-# nzffdr <img src='man/figures/nzffdr_hex.png' align="right" height="150" /></a>
+# nzffdr <img src='man/figures/nzffdr_hex.svg' align="right" height="150" /></a>
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/nzffdr)](https://CRAN.R-project.org/package=nzffdr)
 [![R-CMD-check](https://github.com/flee598/nzffdr/workflows/R-CMD-check/badge.svg)](https://github.com/flee598/nzffdr/actions)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/nzffdr)](https://r-pkg.org/pkg/nzffdr)
 <!-- badges: end -->
+
+## Major update December 2021
+
+Following a significant update to the NZFFD, the nzffdr package has been
+completely overhauled. The NZFFD update resulted in nzffdr v 1.0.0
+functions either i) not working or, ii) being redundant. Therefore I
+have completely rewritten nzffdr. This does mean there is **NO**
+backwards compatibility. I am sorry for this, but it was out of my
+control given the changes to NZFFD.
+
+On the up side, the NZFFD now contains lots of useful additional
+information by default, and the new and improved nzffdr has added
+functionality.
+
+## Package overview
 
 The purpose of this package is to allow for direct access to the NZ
 Freshwater Fish Database ([NZFFD](https://nzffdms.niwa.co.nz/search))
@@ -14,11 +33,24 @@ missing data.
 For a detailed guide to using the package see the [help
 page](https://flee598.github.io/nzffdr/).
 
+A preprint describing the package is now available (if you wish to cite
+the package please use this):
+
+Lee, F., & Young, N. (2021). nzffdr: an R package to import, clean and
+update data from the New Zealand Freshwater Fish Database. bioRxiv.
+<https://doi.org/10.1101/2021.06.22.449519>
+
 ### Installation
 
+For now, the only functioning version of nzffdr is here on GitHub, I aim
+to get nzffdr v 2.0.0 on CRAN in early 2022.
+
+### Development version
+
+To install the latest development version install from GitHub.
+
 ``` r
-# devtools::install_github("flee598/nzffdr")
-library(nzffdr)
+devtools::install_github("flee598/nzffdr")
 ```
 
 ### Import data from the NZFFD
@@ -28,164 +60,139 @@ database.
 
 ``` r
 # import all records between 2010 and 2015
-dat <- nzffd_import(catchment = "", river = "", location = "", 
-  fish_method = "", species = "", starts = 2010, ends = 2015)
-head(dat)
-#>    card  m    y     catchname catch                    locality time  org map
-#> 1 10142 12 2010     Waikato R   434               Waikato River      niwa R13
-#> 2 10142 12 2010     Waikato R   434               Waikato River      niwa R13
-#> 3 12132  1 2011 Waimakariri R   664 Otukaikino Stream tributary  day docc M35
-#> 4 12132  1 2011 Waimakariri R   664 Otukaikino Stream tributary  day docc M35
-#> 5 12132  1 2011 Waimakariri R   664 Otukaikino Stream tributary  day docc M35
-#> 6 12132  1 2011 Waimakariri R   664 Otukaikino Stream tributary  day docc M35
-#>      east   north altitude penet fishmeth effort pass spcode abund number minl
-#> 1 2691748 6427557       15    49              NA   NA anguil            3   NA
-#> 2 2691748 6427557       15    49              NA   NA chefos            1   NA
-#> 3 2479366 5751283       10    11      ntc     17   NA angdie           18  400
-#> 4 2479366 5751283       10    11      ntc     17   NA angaus           50  250
-#> 5 2479366 5751283       10    11      ntc     17   NA gobgob            1  125
-#> 6 2479366 5751283       10    11      ntc     17   NA gobcot           20   40
-#>   maxl  nzreach
-#> 1   NA  3008300
-#> 2   NA  3008300
-#> 3 1100 13043121
-#> 4  900 13043121
-#> 5   NA 13043121
-#> 6  110 13043121
+library(nzffdr)
 
-# To import the entire NZFF database:
+dat <- nzffdr_import(institution = "", catchment_num = "", catchment_name = "",
+                    water_body = "", fish_method = "", taxon = "", 
+                    starts = 2010, ends = 2015, download_format = "all")
+head(dat)
+#>   nzffdRecordNumber institutionRecordNumber  eventDate eventTime
+#> 1             12132                         2011-01-18       day
+#> 2             12132                         2011-01-18       day
+#> 3             12132                         2011-01-18       day
+#> 4             12132                         2011-01-18       day
+#> 5             12132                         2011-01-18       day
+#> 6             12132                         2011-01-18       day
+#>                             institution samplingPurpose
+#> 1 Department of Conservation Canterbury                
+#> 2 Department of Conservation Canterbury                
+#> 3 Department of Conservation Canterbury                
+#> 4 Department of Conservation Canterbury                
+#> 5 Department of Conservation Canterbury                
+#> 6 Department of Conservation Canterbury                
+#>                     waterBody waterBodyType waterPermanence site
+#> 1 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#> 2 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#> 3 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#> 4 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#> 5 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#> 6 Otukaikino Stream tributary   Not Entered       Perennial   NA
+#>   catchmentNumber catchmentName eastingNZTM northingNZTM decimalLongitude
+#> 1             664 Waimakariri R     1569366      5189668        -43.44526
+#> 2             664 Waimakariri R     1569366      5189668        -43.44526
+#> 3             664 Waimakariri R     1569366      5189668        -43.44526
+#> 4             664 Waimakariri R     1569366      5189668        -43.44526
+#> 5             664 Waimakariri R     1569366      5189668        -43.44526
+#> 6             664 Waimakariri R     1569366      5189668        -43.44526
+#>   decimalLatitude recSegment minimumElevation distanceOcean siteTidal
+#> 1        172.6214   13121594               10          10.9         n
+#> 2        172.6214   13121594               10          10.9         n
+#> 3        172.6214   13121594               10          10.9         n
+#> 4        172.6214   13121594               10          10.9         n
+#> 5        172.6214   13121594               10          10.9         n
+#> 6        172.6214   13121594               10          10.9         n
+#>   siteLandlocked downstreamBarrier eventLocationRemarks siteReachLength
+#> 1              u                 n                                   NA
+#> 2              u                 n                                   NA
+#> 3              u                 n                                   NA
+#> 4              u                 n                                   NA
+#> 5              u                 n                                   NA
+#> 6              u                 n                                   NA
+#>   siteAverageWidth minimumSampledDepth maximumSampledDepth waterLevel
+#> 1                1                  NA                 0.6    Unknown
+#> 2                1                  NA                 0.6    Unknown
+#> 3                1                  NA                 0.6    Unknown
+#> 4                1                  NA                 0.6    Unknown
+#> 5                1                  NA                 0.6    Unknown
+#> 6                1                  NA                 0.6    Unknown
+#>   waterColour waterClarity clarityMethod waterTemperature waterConductivity
+#> 1  Colourless           NA            NA               16                NA
+#> 2  Colourless           NA            NA               16                NA
+#> 3  Colourless           NA            NA               16                NA
+#> 4  Colourless           NA            NA               16                NA
+#> 5  Colourless           NA            NA               16                NA
+#> 6  Colourless           NA            NA               16                NA
+#>   waterDissolvedOxygenPercent waterDissolvedOxygenPPM waterPH waterSalinity
+#> 1                          NA                      NA      NA            NA
+#> 2                          NA                      NA      NA            NA
+#> 3                          NA                      NA      NA            NA
+#> 4                          NA                      NA      NA            NA
+#> 5                          NA                      NA      NA            NA
+#> 6                          NA                      NA      NA            NA
+#>                                                                  habitatFlowPercent
+#> 1 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#> 2 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#> 3 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#> 4 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#> 5 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#> 6 Mud:50, Cobbles (64-257 mm):5, Fine gravel:10, Sand (1-2 mm):25, Coarse gravel:10
+#>                                                            habitatSubstratePercent
+#> 1 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#> 2 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#> 3 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#> 4 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#> 5 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#> 6 Wood/instream debris:y, Macrophytes-algae:y, Undercut banks:y, Bank vegetation:y
+#>   habitatInstreamCoverPresent                 habitatRiparianVegPercent
+#> 1              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#> 2              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#> 3              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#> 4              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#> 5              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#> 6              Pool:5, Run:95 Scrub:10, Grass/tussock:60, Raupo/flax:30
+#>                              samplingMethod samplingProtocol EfmNumberOfPasses
+#> 1 Other net - combination of nets and traps          Unknown                NA
+#> 2 Other net - combination of nets and traps          Unknown                NA
+#> 3 Other net - combination of nets and traps          Unknown                NA
+#> 4 Other net - combination of nets and traps          Unknown                NA
+#> 5 Other net - combination of nets and traps          Unknown                NA
+#> 6 Other net - combination of nets and traps          Unknown                NA
+#>   EfmVoltage EfmPulseRate EfmPulseRateWidth EfmAnodeSize EfmMinutes EfmArea
+#> 1         NA           NA                NA                      NA      NA
+#> 2         NA           NA                NA                      NA      NA
+#> 3         NA           NA                NA                      NA      NA
+#> 4         NA           NA                NA                      NA      NA
+#> 5         NA           NA                NA                      NA      NA
+#> 6         NA           NA                NA                      NA      NA
+#>   NetsTrapsTotalNumber NetsTrapsBaited NetsTrapsMeshSize NetsTrapsDayNight
+#> 1                   17              NA                NA                NA
+#> 2                   17              NA                NA                NA
+#> 3                   17              NA                NA                NA
+#> 4                   17              NA                NA                NA
+#> 5                   17              NA                NA                NA
+#> 6                   17              NA                NA                NA
+#>   NetsTrapsAverageSetTime ObservationArea               taxonName
+#> 1                      NA              NA  Gobiomorphus gobioides
+#> 2                      NA              NA  Gobiomorphus breviceps
+#> 3                      NA              NA      Galaxias maculatus
+#> 4                      NA              NA      Anguilla australis
+#> 5                      NA              NA Gobiomorphus cotidianus
+#> 6                      NA              NA  Anguilla dieffenbachii
+#>   taxonCommonName taxonRemarks totalCount present soughtNotDetected
+#> 1     Giant bully                       1   false             false
+#> 2    Upland bully                       1   false             false
+#> 3          Inanga                       1   false             false
+#> 4    Shortfin eel                      50   false             false
+#> 5    Common bully                      20   false             false
+#> 6     Longfin eel                      18   false             false
+#>   occurrenceRemarks minLength maxLength indLengths dataVersion
+#> 1                NA       125        NA                     V1
+#> 2                NA        56        NA                     V1
+#> 3                NA       150        NA                     V1
+#> 4                NA       250       900                     V1
+#> 5                NA        40       110                     V1
+#> 6                NA       400      1100                     V1
+
+# To import the entire NZFF Database:
 # dat <- nzffd_import()
 ```
-
-### Cleaning data
-
-``` r
-dat2 <- nzffd_clean(dat)
-head(dat2)
-#>    card  m    y     catchname catch                    locality time  org map
-#> 1 10142 12 2010     Waikato R   434               Waikato River   NA niwa r13
-#> 2 10142 12 2010     Waikato R   434               Waikato River   NA niwa r13
-#> 3 12132  1 2011 Waimakariri R   664 Otukaikino Stream Tributary   NA docc m35
-#> 4 12132  1 2011 Waimakariri R   664 Otukaikino Stream Tributary   NA docc m35
-#> 5 12132  1 2011 Waimakariri R   664 Otukaikino Stream Tributary   NA docc m35
-#> 6 12132  1 2011 Waimakariri R   664 Otukaikino Stream Tributary   NA docc m35
-#>      east   north altitude penet fishmeth effort pass spcode abund number minl
-#> 1 2691748 6427557       15    49     <NA>     NA   NA anguil  <NA>      3   NA
-#> 2 2691748 6427557       15    49     <NA>     NA   NA chefos  <NA>      1   NA
-#> 3 2479366 5751283       10    11      ntc     17   NA angdie  <NA>     18  400
-#> 4 2479366 5751283       10    11      ntc     17   NA angaus  <NA>     50  250
-#> 5 2479366 5751283       10    11      ntc     17   NA gobgob  <NA>      1  125
-#> 6 2479366 5751283       10    11      ntc     17   NA gobcot  <NA>     20   40
-#>   maxl  nzreach      form
-#> 1   NA  3008300     River
-#> 2   NA  3008300     River
-#> 3 1100 13043121 Tributary
-#> 4  900 13043121 Tributary
-#> 5   NA 13043121 Tributary
-#> 6  110 13043121 Tributary
-```
-
-### Filling gaps and adding species information
-
-``` r
-dat3 <- nzffd_fill(dat2, alt = TRUE, maps = TRUE)
-head(dat3)
-#>   spcode   card  m    y   catchname   catch         locality     time  org map
-#> 1 aldfor 104726  5 2015     Taipo S 229.000     Taipo Stream 09:50:00 hbrc v21
-#> 2 aldfor 104396  4 2013 Ngaruroro R 231.000 Waitangi Estuary 13:30:00 hbrc v21
-#> 3 aldfor  33330  1 2011 Ngaruroro R 231.000  Ngaruroro River     <NA> hbrc v21
-#> 4 aldfor  33321 10 2012     Clive R 231.501      Muddy Creek 23:00:00 hbrc v21
-#> 5 aldfor  30982  4 2010      Whau R  80.060  Avondale Stream 10:15:00  bml r11
-#> 6 aldfor 104726  5 2015     Taipo S 229.000     Taipo Stream 09:50:00 hbrc v21
-#>      east   north altitude penet fishmeth effort pass abund number minl maxl
-#> 1 2840995 6182554       16     4      fys     NA   NA  <NA>      5   NA   NA
-#> 2 2847218 6174038       16     0      sen     NA   NA  <NA>     27   NA   NA
-#> 3 2846262 6174474        2     2      fyn     NA   NA  <NA>      6   42  105
-#> 4 2847598 6173371        0     0      spo     NA   NA  <NA>     NA   NA   NA
-#> 5 2661200 6475000        5     1      nfc     50    1  <NA>      2  250  270
-#> 6 2840995 6182554       16     4      fys     NA   NA  <NA>      4   NA   NA
-#>   nzreach    form      common_name             sci_name    family       genus
-#> 1 8023537  Stream Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#> 2 8024600 Estuary Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#> 3 8024599   River Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#> 4 8024588   Creek Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#> 5 2006167  Stream Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#> 6 8023537  Stream Yelloweye mullet Aldrichetta forsteri Mugilidae Aldrichetta
-#>    species   threat_class native
-#> 1 forsteri not threatened native
-#> 2 forsteri not threatened native
-#> 3 forsteri not threatened native
-#> 4 forsteri not threatened native
-#> 5 forsteri not threatened native
-#> 6 forsteri not threatened native
-```
-
-### Adding River Environment Classification data
-
-This function requires an internet connection to query the REC database.
-
-``` r
-dat4 <- nzffd_add(dat3)
-
-# sort by date
-head(dat4[order(dat4$y, dat4$m),])
-#>      nzreach spcode  card m    y         catchname   catch
-#> 28         0 galfas 27877 1 2010 Hen And Chicken I  53.000
-#> 29         0 galfas 27876 1 2010 Hen And Chicken I  53.000
-#> 1855 1026192 parcur 30880 1 2010       Oruawharo R 459.111
-#> 1856 1026192 parane 30880 1 2010       Oruawharo R 459.111
-#> 1857 1026192 angaus 30880 1 2010       Oruawharo R 459.111
-#> 1858 1026192 gobcot 30880 1 2010       Oruawharo R 459.111
-#>                             locality     time  org map    east   north altitude
-#> 28   Unnamed Stream Koputotara Point 13:00:00 docy r07 2666100 6588400       28
-#> 29         Unnamed Stream South Cove 13:00:00 docy r07 2666600 6588300       20
-#> 1855          Hakaru River Tributary 10:00:00 doca q08 2649760 6557736       75
-#> 1856          Hakaru River Tributary 10:00:00 doca q08 2649760 6557736       75
-#> 1857          Hakaru River Tributary 10:00:00 doca q08 2649760 6557736       75
-#> 1858          Hakaru River Tributary 10:00:00 doca q08 2649760 6557736       75
-#>      penet fishmeth effort pass abund number minl maxl      form
-#> 28      10      gmt     10   NA  <NA>      4   95  140    Stream
-#> 29      10      gmt      9   NA  <NA>      1  115   NA    Stream
-#> 1855    20      gmt      6   NA     c     NA   NA   NA Tributary
-#> 1856    20      gmt      6   NA     o     NA   NA   NA Tributary
-#> 1857    20      gmt      6   NA     c     NA   30   45 Tributary
-#> 1858    20      gmt      6   NA  <NA>      2   40   70 Tributary
-#>            common_name                sci_name       family        genus
-#> 28       Banded kokopu      Galaxias fasciatus   Galaxiidae     Galaxias
-#> 29       Banded kokopu      Galaxias fasciatus   Galaxiidae     Galaxias
-#> 1855 Freshwater shrimp    Paratya curvirostris      Atyidae      Paratya
-#> 1856             Koura       Paranephrops spp. Parastacidae Paranephrops
-#> 1857      Shortfin eel      Anguilla australis  Anguillidae     Anguilla
-#> 1858      Common bully Gobiomorphus cotidianus   Eleotridae Gobiomorphus
-#>           species   threat_class native OBJECTID FNODE TNODE   LENGTH REACH_ID
-#> 28      fasciatus not threatened native       NA    NA    NA       NA       NA
-#> 29      fasciatus not threatened native       NA    NA    NA       NA       NA
-#> 1855 curvirostris not threatened native    26085 27471 27344 1745.513    26192
-#> 1856         spp. not threatened native    26085 27471 27344 1745.513    26192
-#> 1857    australis not threatened native    26085 27471 27344 1745.513    26192
-#> 1858   cotidianus not threatened native    26085 27471 27344 1745.513    26192
-#>      FNODE_1 TNODE_1 ORDER CLIMATE SRC_OF_FLW GEOLOGY LANDCOVER NET_POSN
-#> 28        NA      NA    NA    <NA>       <NA>    <NA>      <NA>     <NA>
-#> 29        NA      NA    NA    <NA>       <NA>    <NA>      <NA>     <NA>
-#> 1855   27483   27356     2      WW          L      SS         P       LO
-#> 1856   27483   27356     2      WW          L      SS         P       LO
-#> 1857   27483   27356     2      WW          L      SS         P       LO
-#> 1858   27483   27356     2      WW          L      SS         P       LO
-#>      VLY_LNDFRM CSOF   CSOFG    CSOFGL     CSOFGLNP      CSOFGLNPVL SPRING
-#> 28         <NA> <NA>    <NA>      <NA>         <NA>            <NA>   <NA>
-#> 29         <NA> <NA>    <NA>      <NA>         <NA>            <NA>   <NA>
-#> 1855         LG WW/L WW/L/SS WW/L/SS/P WW/L/SS/P/LO WW/L/SS/P/LO/LG      -
-#> 1856         LG WW/L WW/L/SS WW/L/SS/P WW/L/SS/P/LO WW/L/SS/P/LO/LG      -
-#> 1857         LG WW/L WW/L/SS WW/L/SS/P WW/L/SS/P/LO WW/L/SS/P/LO/LG      -
-#> 1858         LG WW/L WW/L/SS WW/L/SS/P WW/L/SS/P/LO WW/L/SS/P/LO/LG      -
-#>      NZFNODE NZTNODE  DISTSEA CATCHAREA
-#> 28        NA      NA       NA        NA
-#> 29        NA      NA       NA        NA
-#> 1855 1027471 1027344 20835.72   1748249
-#> 1856 1027471 1027344 20835.72   1748249
-#> 1857 1027471 1027344 20835.72   1748249
-#> 1858 1027471 1027344 20835.72   1748249
-```
-
-Using the four functions should result in a cleaned up dataframe of
-NZFFD records, along with some missing data and associated REC data.
